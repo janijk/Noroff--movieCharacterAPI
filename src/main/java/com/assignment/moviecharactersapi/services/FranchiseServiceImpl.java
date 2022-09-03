@@ -8,9 +8,13 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class FranchiseServiceImpl implements FranchiseService{
+    private final Logger logger = LoggerFactory.getLogger(FranchiseServiceImpl.class);
     private final FranchiseRepository franchiseRepository;
     private final MovieRepository movieRepository;
 
@@ -36,31 +40,25 @@ public class FranchiseServiceImpl implements FranchiseService{
         return franchiseRepository.save(entity);
     }
     @Override
+    @Transactional
     public void deleteById(Integer id) {
-        Franchise fran = franchiseRepository.findById(id).get();
-        fran.getMovies().forEach(m -> m.setFranchise(null));
-        franchiseRepository.deleteById(id);
+        if (franchiseRepository.existsById(id)){
+            Franchise fran = franchiseRepository.findById(id).get();
+            fran.getMovies().forEach(m -> m.setFranchise(null));
+            franchiseRepository.deleteById(id);
+        }else {
+            logger.warn("Franchise with ID: " + id + " doesn't exist");
+        }
     }
     @Override
     public void delete(Franchise entity) {
-
+        franchiseRepository.delete(entity);
     }
     @Override
     public Collection<Movie> getAllMoviesInFranchise(int franchiseId) {
         return franchiseRepository.findById(franchiseId).get().getMovies();
     }
     @Override
-    public Collection<Character> getAllCharactersInFranchise(int franchiseId) {
-        Collection<Movie> films = getAllMoviesInFranchise(franchiseId);
-        Collection<Character> chars = new ArrayList<>();
-        for (Movie m : films){
-            
-        }
-               // films.forEach(film ->chars.add(film.getCharacters()));
-        return null;
-    }
-    @Override
-    public void updateMoviesInFranchise(int franchiseId, int... movieId) {
-
+    public void updateMoviesInFranchise(int franchiseId, int... movieId) { // IN PROGRESS
     }
 }
