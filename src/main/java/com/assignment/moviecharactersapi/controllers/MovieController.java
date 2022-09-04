@@ -4,12 +4,14 @@ import com.assignment.moviecharactersapi.mappers.MovieMapper;
 import com.assignment.moviecharactersapi.models.Movie;
 import com.assignment.moviecharactersapi.models.dtos.MovieDTO;
 import com.assignment.moviecharactersapi.services.MovieService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * Controller for endpoints considering Movies,
@@ -26,6 +28,7 @@ public class MovieController {
         this.movieMapper = movieMapper;
     }
 
+    @Operation(summary = "Get all movies")
     @GetMapping
     public ResponseEntity getAll(){
         Collection<MovieDTO> films = movieMapper.movieToMovieDTO(
@@ -33,6 +36,7 @@ public class MovieController {
         );
         return ResponseEntity.ok(films);
     }
+    @Operation(summary = "Get a movie by id")
     @GetMapping("{id}") // GET : api/v1/movies/movieId
     public ResponseEntity getById(@PathVariable int id){
         MovieDTO film = movieMapper.movieToMovieDTO(
@@ -40,11 +44,13 @@ public class MovieController {
         );
         return ResponseEntity.ok(film);
     }
-    @PostMapping
+    @Operation(summary = "Add a new movie")
+    @PostMapping // POST : api/v1/movies
     public ResponseEntity add(@RequestBody Movie movie){
         Movie film = movieService.add(movie);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+    @Operation(summary = "Update a movie")
     @PostMapping("{id}") // PUT : api/v1/movies/movieId
     public ResponseEntity update(@RequestBody MovieDTO movieDTO, @PathVariable int id){
         if (id != movieDTO.getId()){
@@ -56,6 +62,13 @@ public class MovieController {
         }
         return ResponseEntity.noContent().build();
     }
+    @Operation(summary = "Update characters in a movie")
+    @PostMapping("characters/{id}") // PUT : api/v1/movies/characters/movieId
+    public ResponseEntity updateAllCharacters(@PathVariable int id, @RequestBody Set<Integer> ids){
+        movieService.updateCharactersInMovie(id, ids);
+        return ResponseEntity.noContent().build();
+    }
+    @Operation(summary = "Delete a movie")
     @DeleteMapping("{id}") // DELETE : api/v1/movies/movieId
     public ResponseEntity delete(@PathVariable int id){
         movieService.deleteById(id);

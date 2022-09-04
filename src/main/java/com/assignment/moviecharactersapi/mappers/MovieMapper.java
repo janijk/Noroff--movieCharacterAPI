@@ -35,7 +35,10 @@ public abstract class MovieMapper {
 
     @Named("franchisesIdToFranchise")
     Franchise mapFranchiseIdToFranchise(int id){
-        return franchiseService.findById(id);
+        if(id != 0){
+            return franchiseService.findById(id);
+        }
+        return null;
     }
     @Named("characterIdsToCharacters")
     Set<Character> mapCharacterIdsToCharacters(Set<Integer> ids){
