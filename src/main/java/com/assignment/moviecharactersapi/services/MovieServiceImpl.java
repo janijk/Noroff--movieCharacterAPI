@@ -1,5 +1,6 @@
 package com.assignment.moviecharactersapi.services;
 
+import com.assignment.moviecharactersapi.exceptions.MovieNotFoundException;
 import com.assignment.moviecharactersapi.models.Character;
 import com.assignment.moviecharactersapi.models.Movie;
 import com.assignment.moviecharactersapi.repositories.CharacterRepository;
@@ -28,7 +29,7 @@ public class MovieServiceImpl implements MovieService{
 
     @Override
     public Movie findById(Integer id) {
-        return movieRepository.findById(id).orElseThrow();
+        return movieRepository.findById(id).orElseThrow(()-> new MovieNotFoundException(id));
     }
     @Override
     public Collection<Movie> findAll() {
