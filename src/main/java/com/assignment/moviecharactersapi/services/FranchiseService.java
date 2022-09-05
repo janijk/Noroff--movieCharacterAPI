@@ -4,6 +4,7 @@ import com.assignment.moviecharactersapi.models.Franchise;
 import com.assignment.moviecharactersapi.models.Movie;
 
 import java.util.Collection;
+import java.util.Set;
 
 public interface FranchiseService extends CRUDService<Franchise, Integer> {
     /**
@@ -20,5 +21,5 @@ public interface FranchiseService extends CRUDService<Franchise, Integer> {
      * @param franchiseId id of a franchise
      * @param movieId array of movie id's
      */
-    void updateMoviesInFranchise(int franchiseId, int... movieId);
+    void updateMoviesInFranchise(int franchiseId, Set<Integer> movieId);
 }

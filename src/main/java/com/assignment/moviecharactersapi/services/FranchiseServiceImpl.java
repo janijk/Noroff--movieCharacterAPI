@@ -1,13 +1,15 @@
 package com.assignment.moviecharactersapi.services;
 
+import com.assignment.moviecharactersapi.exceptions.FranchiseNotFoundException;
 import com.assignment.moviecharactersapi.models.Franchise;
 import com.assignment.moviecharactersapi.models.Movie;
 import com.assignment.moviecharactersapi.repositories.FranchiseRepository;
-import com.assignment.moviecharactersapi.repositories.MovieRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,16 +18,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class FranchiseServiceImpl implements FranchiseService{
     private final Logger logger = LoggerFactory.getLogger(FranchiseServiceImpl.class);
     private final FranchiseRepository franchiseRepository;
-    private final MovieRepository movieRepository;
+    private final MovieService movieService;
 
-    public FranchiseServiceImpl(FranchiseRepository franchiseRepository, MovieRepository movieRepository) {
+    public FranchiseServiceImpl(FranchiseRepository franchiseRepository, MovieService movieService) {
         this.franchiseRepository = franchiseRepository;
-        this.movieRepository = movieRepository;
+        this.movieService = movieService;
     }
 
     @Override
     public Franchise findById(Integer id) {
-        return franchiseRepository.findById(id).orElseThrow();
+        return franchiseRepository.findById(id).orElseThrow(()->new FranchiseNotFoundException(id));
     }
     @Override
     public Collection<Franchise> findAll() {
@@ -59,6 +61,14 @@ public class FranchiseServiceImpl implements FranchiseService{
         return franchiseRepository.findById(franchiseId).get().getMovies();
     }
     @Override
-    public void updateMoviesInFranchise(int franchiseId, int... movieId) { // IN PROGRESS
+    public void updateMoviesInFranchise(int franchiseId, Set<Integer> movieId) {
+        Set<Movie> films = null;
+        if (movieId != null) {
+            films = movieId.stream()
+                    .map(id -> movieService.findById(id)).collect(Collectors.toSet());
+        }
+        Franchise franchise = findById(franchiseId);
+        franchise.setMovies(films);
+        update(franchise);
     }
 }

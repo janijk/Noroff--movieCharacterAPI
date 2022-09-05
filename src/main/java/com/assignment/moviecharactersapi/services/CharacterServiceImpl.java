@@ -1,15 +1,12 @@
 package com.assignment.moviecharactersapi.services;
 
 import com.assignment.moviecharactersapi.models.Character;
-import com.assignment.moviecharactersapi.models.Movie;
 import com.assignment.moviecharactersapi.repositories.CharacterRepository;
-import com.assignment.moviecharactersapi.repositories.FranchiseRepository;
 import com.assignment.moviecharactersapi.repositories.MovieRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Set;
 
 @Service
 public class CharacterServiceImpl implements CharacterService{
