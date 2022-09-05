@@ -7,13 +7,6 @@ import java.util.Collection;
 
 public interface MovieService extends CRUDService<Movie, Integer> {
     /**
-     * Get all characters that appear in a given movie
-     *
-     * @param movieId id of a movie
-     * @return Collection of characters
-     */
-    Collection<Character> getAllCharactersInMovie(int movieId);
-    /**
      * Updates characters of a movie. Takes movie and array of
      * characters as parameters.
      *

@@ -14,13 +14,6 @@ public interface FranchiseService extends CRUDService<Franchise, Integer> {
      */
     Collection<Movie> getAllMoviesInFranchise(int franchiseId);
     /**
-     * Get all characters that appear in a given franchise
-     *
-     * @param franchiseId id of a franchise
-     * @return Collection of characters
-     */
-    Collection<Character> getAllCharactersInFranchise(int franchiseId);
-    /**
      * Updates movies of a franchise. Takes franchise and array of
      * movies as parameters
      *
