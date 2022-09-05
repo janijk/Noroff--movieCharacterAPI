@@ -35,6 +35,10 @@ public class MovieServiceImpl implements MovieService{
         return movieRepository.findAll();
     }
     @Override
+    public Collection<Movie> findAllByName(String name) {
+        return movieRepository.findAllByName(name);
+    }
+    @Override
     public Movie add(Movie entity) {
         return movieRepository.save(entity);
     }

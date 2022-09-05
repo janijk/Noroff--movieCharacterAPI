@@ -44,6 +44,14 @@ public class MovieController {
         );
         return ResponseEntity.ok(film);
     }
+    @Operation(summary = "Get a movie by name")
+    @GetMapping("search") // GET : api/v1/movie/search?name=movieName
+    public ResponseEntity getByName(@RequestParam String name){
+        Collection<MovieDTO> films = movieMapper.movieToMovieDTO(
+                movieService.findAllByName(name)
+        );
+        return ResponseEntity.ok(films);
+    }
     @Operation(summary = "Add a new movie")
     @PostMapping // POST : api/v1/movies
     public ResponseEntity add(@RequestBody Movie movie){
