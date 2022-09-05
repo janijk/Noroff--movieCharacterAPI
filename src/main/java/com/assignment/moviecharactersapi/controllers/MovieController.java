@@ -4,6 +4,7 @@ import com.assignment.moviecharactersapi.exceptions.MovieNotFoundException;
 import com.assignment.moviecharactersapi.mappers.MovieMapper;
 import com.assignment.moviecharactersapi.models.Movie;
 import com.assignment.moviecharactersapi.models.dtos.MovieDTO;
+import com.assignment.moviecharactersapi.models.dtos.MoviePOSTDTO;
 import com.assignment.moviecharactersapi.services.MovieService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -95,9 +96,9 @@ public class MovieController {
     })
     @Operation(summary = "Add a new movie")
     @PostMapping // POST : api/v1/movies
-    public ResponseEntity add(@RequestBody MovieDTO movie){
+    public ResponseEntity add(@RequestBody MoviePOSTDTO movie){
         movieService.add(
-                movieMapper.movieDTOtoMovie(movie)
+                movieMapper.moviePostDtoToMovie(movie)
         );
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }

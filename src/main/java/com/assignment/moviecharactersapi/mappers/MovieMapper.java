@@ -4,6 +4,7 @@ import com.assignment.moviecharactersapi.models.Franchise;
 import com.assignment.moviecharactersapi.models.Movie;
 import com.assignment.moviecharactersapi.models.Character;
 import com.assignment.moviecharactersapi.models.dtos.MovieDTO;
+import com.assignment.moviecharactersapi.models.dtos.MoviePOSTDTO;
 import com.assignment.moviecharactersapi.services.CharacterService;
 import com.assignment.moviecharactersapi.services.FranchiseService;
 import com.assignment.moviecharactersapi.services.MovieService;
@@ -32,6 +33,10 @@ public abstract class MovieMapper {
     @Mapping(target = "franchise", source = "franchise", qualifiedByName = "franchisesIdToFranchise")
     @Mapping(target = "characters", source = "characters", qualifiedByName = "characterIdsToCharacters")
     public abstract Movie movieDTOtoMovie(MovieDTO movieDTO);
+    @Mapping(target = "franchise", ignore = true)
+    @Mapping(target = "characters", ignore = true)
+    public abstract Movie moviePostDtoToMovie(MoviePOSTDTO mpdto);
+
 
     @Named("franchisesIdToFranchise")
     Franchise mapFranchiseIdToFranchise(int id){
