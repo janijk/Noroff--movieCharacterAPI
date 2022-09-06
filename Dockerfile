@@ -8,10 +8,10 @@ WORKDIR /app
 
 ENV SPRING_PROFILE "prod"
 ENV DDL_AUTO "update"
-ENV INIT_MODE "never"
+ENV INIT_MODE "always"
 ENV SHOW_JPA_SQL "false"
 
 COPY --from=gradle /app/build/libs/*.jar /app/app.jar
 RUN chown -R 1000:1000 /app
 USER 1000:1000
-ENTRYPOINT ["java", "-jar", "app.jar"]9
+ENTRYPOINT ["java", "-jar", "app.jar"]
