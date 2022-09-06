@@ -1,9 +1,13 @@
 package com.assignment.moviecharactersapi.controllers;
 
+import com.assignment.moviecharactersapi.exceptions.MovieNotFoundException;
 import com.assignment.moviecharactersapi.mappers.FranchiseMapper;
+import com.assignment.moviecharactersapi.mappers.MovieMapper;
 import com.assignment.moviecharactersapi.models.dtos.FranchiseDTO;
 import com.assignment.moviecharactersapi.models.dtos.FranchisePOSTDTO;
+import com.assignment.moviecharactersapi.models.dtos.MovieDTO;
 import com.assignment.moviecharactersapi.services.FranchiseService;
+import com.assignment.moviecharactersapi.services.MovieService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -26,10 +30,15 @@ import java.util.Set;
 public class FranchiseController {
     private final FranchiseService franchiseService;
     private final FranchiseMapper franchiseMapper;
+    private final MovieService movieService;
+    private final MovieMapper movieMapper;
 
-    public FranchiseController(FranchiseService franchiseService, FranchiseMapper franchiseMapper) {
+    public FranchiseController(FranchiseService franchiseService, FranchiseMapper franchiseMapper,
+                               MovieService movieService, MovieMapper movieMapper) {
         this.franchiseService = franchiseService;
         this.franchiseMapper = franchiseMapper;
+        this.movieService = movieService;
+        this.movieMapper = movieMapper;
     }
 
     @ApiResponses(value = {
@@ -66,6 +75,24 @@ public class FranchiseController {
                 franchiseService.findById(id)
         );
         return ResponseEntity.ok(film);
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Success",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = FranchiseDTO.class)) }),
+            @ApiResponse(responseCode = "404",
+                    description = "Franchise doesn't exist with supplied ID",
+                    content = @Content)
+    })
+    @Operation(summary = "Get all movies in a franchise")
+    @GetMapping("{id}/movies") // GET : api/v1/franchises/franchiseId/movies
+    public ResponseEntity getAllMovies(@PathVariable int id){
+        Collection<MovieDTO> movies = movieMapper.movieToMovieDTO(
+                franchiseService.getAllMoviesInFranchise(id)
+        );
+        return ResponseEntity.ok(movies);
     }
 
     @ApiResponses( value = {
