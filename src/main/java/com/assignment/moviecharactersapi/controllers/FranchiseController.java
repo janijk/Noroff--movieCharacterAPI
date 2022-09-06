@@ -71,10 +71,10 @@ public class FranchiseController {
     @Operation(summary = "Get a franchise by id")
     @GetMapping("{id}") // GET : api/v1/franchises/franchiseId
     public ResponseEntity getById(@PathVariable int id){
-        FranchiseDTO film = franchiseMapper.franchiseToFranchiseDTO(
+        FranchiseDTO franchise = franchiseMapper.franchiseToFranchiseDTO(
                 franchiseService.findById(id)
         );
-        return ResponseEntity.ok(film);
+        return ResponseEntity.ok(franchise);
     }
 
     @ApiResponses(value = {
