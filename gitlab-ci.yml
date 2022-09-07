@@ -1,0 +1,60 @@
+variables:
+  CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:latest
+  HEROKU_APP: heroku-deploy-from-gitlab
+  DOCKER_HOST: tcp://docker:2376
+  DOCKER_TLS_CERTDIR: "/certs"
+
+stages:
+  - build
+  - deploy
+
+docker-build:
+  image: docker:latest
+  stage: build
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker build --iidfile imageid.txt -t $CONTAINER_TEST_IMAGE .
+    - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_RELEASE_IMAGE
+    - docker push -a $CI_REGISTRY_IMAGE
+  # Save the Docker image id in a file
+  artifacts:
+    paths:
+      - imageid.txt
+  rules:
+    - if: $CI_COMMIT_BRANCH
+      exists:
+        - Dockerfile
+    - if: '$CI_COMMIT_REF_PROTECTED == "true"'
+
+heroku:
+  stage: deploy
+  image: docker:latest
+  needs:
+    - docker-build
+  services:
+    - docker:dind
+  rules:
+    - if: '$CI_COMMIT_REF_PROTECTED == "true"'
+  when: manual
+  before_script:
+    - docker info
+    # Allow curl requests to be made in the pipeline
+    - apk add --no-cache curl
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker login --username=_ --password=${HEROKU_API_KEY} registry.heroku.com
+    - docker pull $CONTAINER_RELEASE_IMAGE
+    # Push our image from Gitlab to Heroku's registry with a specific tag
+    - docker tag $CONTAINER_RELEASE_IMAGE registry.heroku.com/$HEROKU_APP/web:latest
+    - docker push registry.heroku.com/$HEROKU_APP/web:latest
+    # Update the deployment to make Heroku redeploy
+    - |-
+      curl -X PATCH https://api.heroku.com/apps/$HEROKU_APP/formation \
+      -H "Content-Type: application/json" \
+      -H "Accept: application/vnd.heroku+json; version=3.docker-releases" \
+      -H "Authorization: Bearer ${HEROKU_API_KEY}" \
+      --data '{ "updates": [ { "type": "web", "docker_image": "'$(cat imageid.txt)'" } ] }'
