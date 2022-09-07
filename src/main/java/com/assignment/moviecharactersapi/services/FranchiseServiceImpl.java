@@ -65,10 +65,9 @@ public class FranchiseServiceImpl implements FranchiseService{
         Set<Movie> films = null;
         if (movieId != null) {
             films = movieId.stream()
-                    .map(id -> movieService.findById(id)).collect(Collectors.toSet());
+                    .map(movieService::findById).collect(Collectors.toSet());
+            films.forEach(m -> m.setFranchise(findById(franchiseId)));
+            films.forEach(movieService::update);
         }
-        Franchise franchise = findById(franchiseId);
-        franchise.setMovies(films);
-        update(franchise);
     }
 }
