@@ -53,8 +53,8 @@ heroku:
     - docker push registry.heroku.com/$HEROKU_APP/web:latest
     # Update the deployment to make Heroku redeploy
     - |-
-      curl -X PATCH https://api.heroku.com/apps/$HEROKU_APP/formation
-      --header "Content-Type: application/json" 
-      --header "Accept: application/vnd.heroku+json; version=3"
-      --header "Authorization: Bearer ${HEROKU_API_KEY}"
+      curl -X PATCH https://api.heroku.com/apps/$HEROKU_APP/formation \
+      -H "Content-Type: application/json" \
+      -H "Accept: application/vnd.heroku+json; version=3.docker-releases" \
+      -H "Authorization: Bearer ${HEROKU_API_KEY}" \
       --data '{ "updates": [ { "type": "web", "docker_image": "'$(cat imageid.txt)'" } ] }'
