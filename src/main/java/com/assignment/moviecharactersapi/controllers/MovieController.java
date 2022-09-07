@@ -75,7 +75,7 @@ public class MovieController {
                             array = @ArraySchema(schema = @Schema(implementation = MovieDTO.class))) })
     })
     @Operation(summary = "Get a movie by name")
-    @GetMapping("search") // GET : api/v1/movie/search?name=movieName
+    @GetMapping("search") // GET : api/v1/movies/search?name=movieName
     public ResponseEntity getByName(@RequestParam String name){
         Collection<MovieDTO> films = movieMapper.movieToMovieDTO(
                 movieService.findAllByName(name)

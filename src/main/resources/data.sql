@@ -1,7 +1,7 @@
 -- Franchises
 INSERT INTO franchise ("name", description) VALUES ('Transformers', 'Series of science
 fiction action movies directed by Micheal Bay.');
-INSERT INTO franchise ("name", description) VALUES ('Indian Jones', 'Movies based on the adventures of
+INSERT INTO franchise ("name", description) VALUES ('Indiana Jones', 'Movies based on the adventures of
 Dr. Henry Walton "Indiana" Jones, Jr., a professor of archeology.');
 -- Movies
 INSERT INTO movie (title, genre, release_year, director, picture, trailer)
