@@ -1,15 +1,21 @@
 package com.assignment.moviecharactersapi.services;
 
+import com.assignment.moviecharactersapi.exceptions.MovieNotFoundException;
 import com.assignment.moviecharactersapi.models.Character;
+import com.assignment.moviecharactersapi.models.Movie;
 import com.assignment.moviecharactersapi.repositories.CharacterRepository;
 import com.assignment.moviecharactersapi.repositories.MovieRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 @Service
 public class CharacterServiceImpl implements CharacterService{
+    private final Logger logger = LoggerFactory.getLogger(MovieServiceImpl.class);
     private final CharacterRepository characterRepository;
     private final MovieRepository movieRepository;
 
@@ -35,11 +41,13 @@ public class CharacterServiceImpl implements CharacterService{
         return characterRepository.save(entity);
     }
     @Override
-    public void deleteById(Integer integer) {
-        if(characterRepository.findById(integer).get().getMovies() != null){
-            characterRepository.deleteByIdFromMovieCharacter(integer);
+    @Transactional
+    public void deleteById(Integer id) {
+        if (characterRepository.existsById(id)){
+            characterRepository.deleteById(id);
+        }else {
+            logger.warn("Character with ID: " + id + " doesn't exist");
         }
-        characterRepository.deleteById(integer);
     }
     @Override
     public void delete(Character entity) {
@@ -47,7 +55,8 @@ public class CharacterServiceImpl implements CharacterService{
     }
     @Override
     public Collection<Character> findAllByMovieId(int movieId) {
-        return movieRepository.findById(movieId).get().getCharacters();
+        Movie movie = movieRepository.findById(movieId).orElseThrow(() -> new MovieNotFoundException(movieId));
+        return movie.getCharacters();
     }
     @Override
     public Collection<Character> findAllByFranchiseId(int franchiseId) {
