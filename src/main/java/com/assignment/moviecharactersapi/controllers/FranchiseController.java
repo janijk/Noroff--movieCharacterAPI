@@ -108,12 +108,12 @@ public class FranchiseController {
     })
     @Operation(summary = "Update a franchise")
     @PostMapping("{id}") // PUT : api/v1/franchises/franchiseId
-    public ResponseEntity update(@RequestBody FranchiseDTO franchiseDTO, @PathVariable int id){
-        if (id != franchiseDTO.getId()){
+    public ResponseEntity update(@RequestBody FranchisePOSTDTO franchisePostDTO, @PathVariable int id){
+        if (id != franchisePostDTO.getId()){
             return ResponseEntity.badRequest().build();
         }else {
             franchiseService.update(
-                    franchiseMapper.franchiseDTOtoFranchise(franchiseDTO)
+                    franchiseMapper.franchisePostDTOToFranchise(franchisePostDTO)
             );
         }
         return ResponseEntity.noContent().build();

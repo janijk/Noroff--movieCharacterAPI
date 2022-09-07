@@ -122,12 +122,12 @@ public class CharacterController {
     })
     @Operation(summary = "Update a character")
     @PostMapping("{id}") // PUT : api/v1/characters/characterId
-    public ResponseEntity update(@RequestBody CharacterDTO characterDTO, @PathVariable int id){
-        if (id != characterDTO.getId()){
+    public ResponseEntity update(@RequestBody CharacterPOSTDTO characterPostDTO, @PathVariable int id){
+        if (id != characterPostDTO.getId()){
             return ResponseEntity.badRequest().build();
         }else {
             characterService.update(
-                    characterMapper.characterDTOToCharacter(characterDTO)
+                    characterMapper.characterPostDTOToCharacter(characterPostDTO)
             );
         }
         return ResponseEntity.noContent().build();
