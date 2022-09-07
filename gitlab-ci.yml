@@ -1,5 +1,4 @@
 variables:
-  # Tag it with commit reference
   CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
   CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:latest
   HEROKU_APP: heroku-deploy-from-gitlab
@@ -11,7 +10,6 @@ stages:
   - deploy
 
 docker-build:
-  # Use the official docker image.
   image: docker:latest
   stage: build
   services:
@@ -19,20 +17,17 @@ docker-build:
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    # We build the image ID into a text file
     - docker build --iidfile imageid.txt -t $CONTAINER_TEST_IMAGE .
     - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_RELEASE_IMAGE
     - docker push -a $CI_REGISTRY_IMAGE
-  # Save the Docker image id in a file - will be used later for Heroku
+  # Save the Docker image id in a file
   artifacts:
     paths:
       - imageid.txt
-  # Run this job in a branch where a Dockerfile exists
   rules:
     - if: $CI_COMMIT_BRANCH
       exists:
         - Dockerfile
-    # Only run this on a protected branch:
     - if: '$CI_COMMIT_REF_PROTECTED == "true"'
 
 heroku:
@@ -44,7 +39,6 @@ heroku:
     - docker:dind
   rules:
     - if: '$CI_COMMIT_REF_PROTECTED == "true"'
-  # Manually triggered in Gitlab
   when: manual
   before_script:
     - docker info
