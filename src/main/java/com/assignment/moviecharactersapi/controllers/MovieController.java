@@ -116,12 +116,12 @@ public class MovieController {
     })
     @Operation(summary = "Update a movie")
     @PostMapping("{id}") // PUT : api/v1/movies/movieId
-    public ResponseEntity update(@RequestBody MovieDTO movieDTO, @PathVariable int id){
-        if (id != movieDTO.getId()){
+    public ResponseEntity update(@RequestBody MoviePOSTDTO moviePostDTO, @PathVariable int id){
+        if (id != moviePostDTO.getId()){
             return ResponseEntity.badRequest().build();
         }else {
             movieService.update(
-                    movieMapper.movieDTOtoMovie(movieDTO)
+                    movieMapper.moviePostDtoToMovie(moviePostDTO)
             );
         }
         return ResponseEntity.noContent().build();
